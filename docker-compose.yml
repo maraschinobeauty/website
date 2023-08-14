@@ -1,0 +1,49 @@
+version: '2'
+
+services:
+  frontend:
+    container_name: maraschino-frontend
+    image: node:latest
+    restart: always
+    volumes:
+      - ./frontend:/app
+    env_file:
+      - ./.env
+    working_dir: /app
+    tty: true
+    ports:
+      - 5001:5001
+    command: npm run dev
+    profiles:
+      - frontend
+
+  backend:
+    container_name: maraschino-backend
+    image: node:latest
+    restart: always
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./.env
+    working_dir: /app
+    tty: true
+    ports:
+      - 5002:5002
+    profiles:
+      - backend
+    depends_on:
+      - database
+
+  database:
+    container_name: maraschino-database
+    image: postgres:latest
+    restart: always
+    volumes:
+      - ./database/data:/var/lib/postgres/data
+    env_file:
+      - ./.env
+    tty: true
+    ports:
+      - 5003:5003
+    profiles:
+      - backend
